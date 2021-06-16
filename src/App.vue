@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="container row">
     <div class="col-2">
-				<select id='paises' class="browser-default" v-model="selected">
+				<select id='paises' class="browser-default" v-model="selected" @change="obtener">
 					<option v-for="(country, index) in countriesFromApi" 
 							:value="country" 
 							:key='index' >{{country.name}} - {{country.currencyId}}</option>
@@ -9,10 +9,10 @@
 			</div>
       <br>
     <exchange-component :countryName="selected.name"
-    :countryFlag="selected.id"
+    :countryFlag="countryFlag"
     :countrySymbol="selected.alpha3"
     :currency="selected.currencyName"
-    :exchange="1"></exchange-component>
+    :exchange="exchangeValue"></exchange-component>
   </div>
 </template>
 
@@ -29,7 +29,9 @@ export default {
   data:function(){
     return {
       countriesFromApi:[],
-      selected:''
+      selected:'', 
+      countryFlag:'', 
+      exchangeValue:0
       
     }
   },
@@ -39,13 +41,22 @@ export default {
 	.then((response) => {
 	Object.entries(response.data.results).sort().forEach(([key, value])=>{
 		console.log(key)
-    console.log(value)
 		this.countriesFromApi.push(value)
 	})
 	})
   }, 
-  beforeUpdate:function(){
-    console.log(this.selected)
+  methods:{
+    obtener:function(){
+      console.log(this.selected.currencyId);
+      this.countryFlag=`https://www.countryflags.io/${this.selected.id}/flat/64.png`
+       axios.get(`https://free.currconv.com/api/v7/convert?q=USD_${this.selected.currencyId}&compact=ultra&apiKey=cd551d036c623e3af46d`)
+            .then((response) => {
+				Object.entries(response.data).sort().forEach(([key, value])=>{
+               this.exchangeValue = value;
+               console.log(key)
+				})
+		})
+    }
   }
 }
 </script>

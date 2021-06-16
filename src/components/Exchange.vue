@@ -13,7 +13,7 @@
             <div class="row">
                 <p>Valor de cambio {{usValue}} USD</p>    
                 <div class="input-field col s6">
-                    <input id="us_value" type="number" class="validate" v-model="dolars">
+                    <input id="us_value" type="number" class="validate" v-model="dolars" @keyup="transformar">
                     <label class="active" for="us_value">Cantidad en dolares</label>
                 </div>
             </div>
@@ -31,8 +31,8 @@
             <div class="row">
                 <p>Valor de cambio {{exchange}} {{countrySymbol}}</p>    
                 <div class="input-field col s7">
-                    <input id="us_value" type="number" class="validate" v-model="dolars">
-                    <label class="active" for="us_value">Cantidad en {{currency}}</label>
+                    <input id="us_value" type="number" class="validate" v-model="value" @keyup="transformar">
+                    <label class="active" for="us_value" >Cantidad en {{currency}}</label>
                 </div>
             </div>
         </div>  
@@ -45,22 +45,22 @@
             countryFlag:String, 
             exchange:Number, 
             countryName:String,
-            exchangeValue:Number, 
             countrySymbol:String,
-            currency:String
+            currency:String, 
+            value:Number
         }, 
         data:function(){
             return {
                 usValue:1,
                 dolars:0,
             }
-        },
-        beforeUpdate:function(){
-            console.log(this.countryFlag)
-            if(this.countryFlag){
-                this.countryFlag=`https://www.countryflags.io/${this.countryFlag}/flat/64.png`
-            }       
+        }, 
+        methods:{
+            transformar:function(){
+                this.dolars = this.value / this.exchange;
+            }
         }
+
     }
 </script>
 <style>
